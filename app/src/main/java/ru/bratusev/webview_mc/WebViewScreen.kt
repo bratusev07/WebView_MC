@@ -67,8 +67,6 @@ class WebViewScreen : AppCompatActivity() {
 class ImageAdapter(private val webView: WebView, private val imageUrls: List<WebModel>) :
     RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
 
-    private lateinit var currentUrl: String
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_image, parent, false)
         return ImageViewHolder(view)
@@ -76,19 +74,22 @@ class ImageAdapter(private val webView: WebView, private val imageUrls: List<Web
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         val imageUrl = imageUrls[position]
-        holder.imageView.setImageResource(imageUrl.resource)
-        holder.itemView.setOnClickListener {
-            currentUrl = imageUrl.link
-            webView.loadUrl(currentUrl)
-        }
+        holder.bind(imageUrl)
     }
 
     override fun getItemCount(): Int {
         return imageUrls.size
     }
 
-    class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val imageView: ImageView = itemView.findViewById(R.id.imageView)
+    inner class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val imageView: ImageView = itemView.findViewById(R.id.imageView)
+
+        fun bind(imageUrl: WebModel) {
+            imageView.setImageResource(imageUrl.resource)
+            itemView.setOnClickListener {
+                webView.loadUrl(imageUrl.link)
+            }
+        }
     }
 }
 
